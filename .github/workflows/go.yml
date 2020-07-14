@@ -31,7 +31,7 @@ jobs:
         fi
 
     - name: Build
-      run: go build -v cmd/storage-check
+      run:  cd cmd/storage-check && go build -v
 
     - name: Test
-      run: go test -v cmd/storage-check
+      run: cd cmd/storage-check && go test -v
