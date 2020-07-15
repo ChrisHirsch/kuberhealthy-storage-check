@@ -87,7 +87,13 @@ func runStorageCheck() {
 	case <-ctx.Done():
 		// If there is a cancellation interrupt signal.
 		log.Infoln("Cancelling storage creation job and shutting down due to interrupt.")
-		reportErrorsToKuberhealthy([]string{"failed to create storage within timeout. Permissions?"})
+		errorString := "failed to create storage PVC/PV within timeout (got interrupt). storageConfig="
+		if storageConfig.Spec.StorageClassName != nil {
+			errorString += *storageConfig.Spec.StorageClassName
+		} else {
+			errorString += "default"
+		}
+		reportErrorsToKuberhealthy([]string{errorString})
 		return
 	case <-runTimeout:
 		// If creating a storage took too long, exit.
@@ -116,7 +122,7 @@ func runStorageCheck() {
 		log.Infoln("Initialized storage in", initStorageResult.Pod.Namespace, "namespace:", initStorageResult.Pod.Name)
 	case <-ctx.Done():
 		// If there is a cancellation interrupt signal.
-		log.Infoln("Cancelling init storage job and shutting down due to interrupt.")
+		log.Infoln("Cancelling init storage job and shutting down due to interrupt. err:" + ctx.Err().Error())
 		reportErrorsToKuberhealthy([]string{"failed to initialize storage storage within timeout"})
 		return
 	case <-runTimeout:
@@ -130,7 +136,7 @@ func runStorageCheck() {
 	// TODO Can almost certainly combine this into a function for allowed and ignore
 	log.Infof("CHECK_STORAGE_ALLOWED_CHECK_NODES=%+v", allowedCheckNodesEnv)
 	if allowedCheckNodesEnv != "" {
-		log.Infof("Requsted explicit nodes to perform storage check. Will NOT do discovery %+v", allowedCheckNodesEnv)
+		log.Infof("Requested explicit nodes to perform storage check. Will NOT do discovery %+v", allowedCheckNodesEnv)
 		delimiter := " "
 		// Support , or space separated strings
 		if strings.Contains(allowedCheckNodesEnv, ",") {
