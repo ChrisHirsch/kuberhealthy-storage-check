@@ -190,7 +190,7 @@ subjects:
 
 To use the *Storage Check* with Kuberhealthy, apply the configuration file [storage-check.yaml](storage-check.yaml) to your Kubernetes Cluster. The following command will also apply the configuration file to your current context:
 
-`kubectl apply -f https://raw.githubusercontent.com/Comcast/kuberhealthy/2.0.0/cmd/storage-check/storage-check.yaml`
+`kubectl apply -f https://raw.githubusercontent.com/ChrisHirsch/kuberhealthy-storage-check/master/deploy/storage-check.yaml`
 
 Make sure you are using the latest release of Kuberhealthy 2.0.0 or later.
 
