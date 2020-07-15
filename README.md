@@ -203,3 +203,7 @@ The check configuration file contains:
 - ServiceAccount
 
 The role, rolebinding, clusterrole, clusterrolebinding and service account are all required to create and delete all PVCs and jobs from the check in the given namespaces you install the check for. The assumed default service account does not provide enough permissions for this check to run.
+
+
+![Go](https://github.com/ChrisHirsch/kuberhealthy-storage-check/workflows/Go/badge.svg)
+![Run Gosec](https://github.com/ChrisHirsch/kuberhealthy-storage-check/workflows/Run%20Gosec/badge.svg)
