@@ -10,7 +10,7 @@ spec:
   podSpec:
     containers:
     - image: chrishirsch/kuberhealthy-storage-check:v0.0.1
-      imagePullPolicy: Always
+      imagePullPolicy: IfNotPresent
       name: main
       resources:
         requests:
