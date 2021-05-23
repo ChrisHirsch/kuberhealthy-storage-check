@@ -79,7 +79,7 @@ func parseInputValues() {
 	log.Infof("input.go checkStorageJobName default=%s env=%s", checkStorageJobName, checkStorageJobNameEnv)
 	if len(checkStorageJobNameEnv) != 0 {
 		checkStorageJobName = checkStorageJobNameEnv
-		log.Infoln("Parsed CHECK_STORAGE_INIT_JOB_NAME:", checkStorageJobName)
+		log.Infoln("Parsed CHECK_STORAGE_JOB_NAME:", checkStorageJobName)
 	}
 
 	// Parse incoming init storage command.
@@ -95,7 +95,7 @@ func parseInputValues() {
 	log.Infof("input.go checkStorageInitCommandArgs default=%s env=%s", checkStorageInitCommandArgs, checkStorageInitCommandArgsEnv)
 	if len(checkStorageInitCommandArgsEnv) != 0 {
 		checkStorageInitCommandArgs = checkStorageInitCommandArgsEnv
-		log.Infoln("Parsed CHECK_STORAGE_COMMAND_ARGS:", checkStorageInitCommandArgs)
+		log.Infoln("Parsed CHECK_STORAGE_INIT_COMMAND_ARGS:", checkStorageInitCommandArgs)
 	}
 
 	// Parse incoming check storage command.

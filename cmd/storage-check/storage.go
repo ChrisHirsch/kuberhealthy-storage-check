@@ -112,8 +112,8 @@ func initializeStorageConfig(jobName string, pvcName string) *batchv1.Job {
 	labels["source"] = "kuberhealthy"
 
 	// Make a Pod spec.
-	var command = []string{defaultCheckStorageInitCommand}
-	var args = []string{"-c", defaultCheckStorageInitCommandArgs}
+	var command = []string{checkStorageInitCommand}
+	var args = []string{"-c", checkStorageInitCommandArgs}
 	pvc := &corev1.PersistentVolumeClaimVolumeSource{
 		ClaimName: pvcName,
 	}
@@ -171,8 +171,8 @@ func checkNodeConfig(jobName string, pvcName string, node string) *batchv1.Job {
 	labels["source"] = "kuberhealthy"
 
 	// Make a Job spec.
-	var command = []string{defaultCheckStorageCommand}
-	var args = []string{"-c", defaultCheckStorageCommandArgs}
+	var command = []string{checkStorageCommand}
+	var args = []string{"-c", checkStorageCommandArgs}
 	pvc := &corev1.PersistentVolumeClaimVolumeSource{
 		ClaimName: pvcName,
 	}
