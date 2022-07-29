@@ -142,45 +142,35 @@ func parseInputValues() {
 	// Calculated in decimal SI units (15 = 15m cpu).
 	millicoreRequest = defaultMillicoreRequest
 	if len(millicoreRequestEnv) != 0 {
-		cpuRequest, err := strconv.ParseInt(millicoreRequestEnv, 10, 64)
-		if err != nil {
-			log.Fatalln("error occurred attempting to parse CHECK_POD_CPU_REQUEST:", err)
-		}
-		millicoreRequest = int(cpuRequest)
-		log.Infoln("Parsed CHECK_POD_CPU_REQUEST:", millicoreRequest)
+		millicoreRequest = millicoreRequestEnv
+		log.Infoln("Parsed CHECK_POD_CPU_REQUEST:", millicoreLimit)
 	}
 
 	// Calculated in decimal SI units (75 = 75m cpu).
 	millicoreLimit = defaultMillicoreLimit
 	if len(millicoreLimitEnv) != 0 {
-		cpuLimit, err := strconv.ParseInt(millicoreLimitEnv, 10, 64)
-		if err != nil {
-			log.Fatalln("error occurred attempting to parse CHECK_POD_CPU_LIMIT:", err)
-		}
-		millicoreLimit = int(cpuLimit)
+		millicoreLimit = millicoreLimitEnv
 		log.Infoln("Parsed CHECK_POD_CPU_LIMIT:", millicoreLimit)
 	}
 
 	// Calculated in binary SI units (20 * 1024^2 = 20Mi memory).
 	memoryRequest = defaultMemoryRequest
 	if len(memoryRequestEnv) != 0 {
-		memRequest, err := strconv.ParseInt(memoryRequestEnv, 10, 64)
-		if err != nil {
-			log.Fatalln("error occurred attempting to parse CHECK_POD_MEM_REQUEST:", err)
-		}
-		memoryRequest = int(memRequest) * 1024 * 1024
+		memoryRequest = memoryRequestEnv
 		log.Infoln("Parsed CHECK_POD_MEM_REQUEST:", memoryRequest)
 	}
 
 	// Calculated in binary SI units (75 * 1024^2 = 75Mi memory).
 	memoryLimit = defaultMemoryLimit
 	if len(memoryLimitEnv) != 0 {
-		memLimit, err := strconv.ParseInt(memoryLimitEnv, 10, 64)
-		if err != nil {
-			log.Fatalln("error occurred attempting to parse CHECK_POD_MEM_LIMIT:", err)
-		}
-		memoryLimit = int(memLimit) * 1024 * 1024
+		memoryLimit = memoryLimitEnv
 		log.Infoln("Parsed CHECK_POD_MEM_LIMIT:", memoryLimit)
+	}
+
+	podPriorityClassName = defaultPodPriorityClassName
+	if len(podPriorityClassNameEnv) != 0 {
+		podPriorityClassName = podPriorityClassNameEnv
+		log.Infoln("Parsed PRIORITY_CLASS_NAME:", podPriorityClassName)
 	}
 
 	// Set check time limit to default

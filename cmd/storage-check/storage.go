@@ -40,10 +40,12 @@ const (
 	defaultImagePullPolicy = corev1.PullIfNotPresent
 
 	// Default container resource requests values.
-	defaultMillicoreRequest = 15               // Calculated in decimal SI units (15 = 15m cpu).
-	defaultMillicoreLimit   = 75               // Calculated in decimal SI units (75 = 75m cpu).
-	defaultMemoryRequest    = 20 * 1024 * 1024 // Calculated in binary SI units (20 * 1024^2 = 20Mi memory).
-	defaultMemoryLimit      = 75 * 1024 * 1024 // Calculated in binary SI units (75 * 1024^2 = 75Mi memory).
+	defaultMillicoreRequest = "15m"  // Calculated in decimal SI units (15 = 15m cpu).
+	defaultMillicoreLimit   = "75m"  // Calculated in decimal SI units (75 = 75m cpu).
+	defaultMemoryRequest    = "20Mi" // Calculated in binary SI units (20 * 1024^2 = 20Mi memory).
+	defaultMemoryLimit      = "75Mi" // Calculated in binary SI units (75 * 1024^2 = 75Mi memory).
+
+	defaultPodPriorityClassName = ""
 
 	// Default container probe values.
 	defaultProbeFailureThreshold    = 5  // Number of consecutive failures for the probe to be considered failed (k8s default = 3).
@@ -123,6 +125,7 @@ func initializeStorageConfig(jobName string, pvcName string) *batchv1.Job {
 				GenerateName: jobName,
 			},
 			Spec: v1.PodSpec{
+				PriorityClassName: podPriorityClassName,
 				Containers: []v1.Container{
 					{
 						Name:            jobName,
@@ -134,6 +137,16 @@ func initializeStorageConfig(jobName string, pvcName string) *batchv1.Job {
 						}},
 						Command: command,
 						Args:    args,
+						Resources: corev1.ResourceRequirements{
+							Requests: corev1.ResourceList{
+								corev1.ResourceCPU:    resource.MustParse(millicoreRequest),
+								corev1.ResourceMemory: resource.MustParse(memoryRequest),
+							},
+							Limits: corev1.ResourceList{
+								corev1.ResourceCPU:    resource.MustParse(millicoreLimit),
+								corev1.ResourceMemory: resource.MustParse(millicoreLimit),
+							},
+						},
 					},
 				},
 				RestartPolicy: v1.RestartPolicyNever,
@@ -182,6 +195,7 @@ func checkNodeConfig(jobName string, pvcName string, node string) *batchv1.Job {
 				GenerateName: jobName,
 			},
 			Spec: v1.PodSpec{
+				PriorityClassName: podPriorityClassName,
 				Containers: []v1.Container{
 					{
 						Name:            jobName,
@@ -193,6 +207,16 @@ func checkNodeConfig(jobName string, pvcName string, node string) *batchv1.Job {
 						}},
 						Command: command,
 						Args:    args,
+						Resources: corev1.ResourceRequirements{
+							Requests: corev1.ResourceList{
+								corev1.ResourceCPU:    resource.MustParse(millicoreRequest),
+								corev1.ResourceMemory: resource.MustParse(memoryRequest),
+							},
+							Limits: corev1.ResourceList{
+								corev1.ResourceCPU:    resource.MustParse(millicoreLimit),
+								corev1.ResourceMemory: resource.MustParse(millicoreLimit),
+							},
+						},
 					},
 				},
 				NodeName:      node,
