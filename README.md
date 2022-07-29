@@ -57,6 +57,7 @@ This check follows the list of actions in order during the run of the check:
   - `CHECK_POD_MEM_LIMIT`: Check pod deployment memory limit value. Calculated in binary SI units `(75 * 1024^2 = 75Mi memory)`.
   - `ADDITIONAL_ENV_VARS`: Comma separated list of `key=value` variables passed into the pod's containers.
   - `SHUTDOWN_GRACE_PERIOD`: Amount of time in seconds the shutdown will allow itself to clean up after an interrupt signal (default=`30s`).
+  - `PRIORITY_CLASS_NAME`: The priority class that will be assigned to the created pods/jobs.
   - `DEBUG`: Verbose debug logging.
 
 #### Example KuberhealthyStorageCheck Spec
