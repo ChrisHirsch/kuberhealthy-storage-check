@@ -84,16 +84,20 @@ var (
 
 	// Deployment pod resource requests and limits.
 	millicoreRequestEnv = os.Getenv("CHECK_POD_CPU_REQUEST")
-	millicoreRequest    int
+	millicoreRequest    string
 
 	millicoreLimitEnv = os.Getenv("CHECK_POD_CPU_LIMIT")
-	millicoreLimit    int
+	millicoreLimit    string
 
 	memoryRequestEnv = os.Getenv("CHECK_POD_MEM_REQUEST")
-	memoryRequest    int
+	memoryRequest    string
 
 	memoryLimitEnv = os.Getenv("CHECK_POD_MEM_LIMIT")
-	memoryLimit    int
+	memoryLimit    string
+
+	// The priority class to use for the daemonset
+	podPriorityClassNameEnv = os.Getenv("PRIORITY_CLASS_NAME")
+	podPriorityClassName    string
 
 	// Check time limit.
 	checkTimeLimit time.Duration
