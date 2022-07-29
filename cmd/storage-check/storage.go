@@ -144,7 +144,7 @@ func initializeStorageConfig(jobName string, pvcName string) *batchv1.Job {
 							},
 							Limits: corev1.ResourceList{
 								corev1.ResourceCPU:    resource.MustParse(millicoreLimit),
-								corev1.ResourceMemory: resource.MustParse(millicoreLimit),
+								corev1.ResourceMemory: resource.MustParse(memoryLimit),
 							},
 						},
 					},
@@ -214,7 +214,7 @@ func checkNodeConfig(jobName string, pvcName string, node string) *batchv1.Job {
 							},
 							Limits: corev1.ResourceList{
 								corev1.ResourceCPU:    resource.MustParse(millicoreLimit),
-								corev1.ResourceMemory: resource.MustParse(millicoreLimit),
+								corev1.ResourceMemory: resource.MustParse(memoryLimit),
 							},
 						},
 					},
