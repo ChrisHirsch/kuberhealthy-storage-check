@@ -5,7 +5,7 @@ on:
       - gosec # for testing this workflow
   pull_request:
     branches:
-      - master
+      - main
 jobs:
   tests:
     runs-on: ubuntu-latest
