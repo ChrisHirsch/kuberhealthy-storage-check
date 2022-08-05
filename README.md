@@ -81,7 +81,7 @@ spec:
           value: "vsan-default"
         - name : CHECK_STORAGE_IGNORED_CHECK_NODES
           value: "node4"
-      image: chrishirsch/kuberhealthy-storage-check:v0.0.1
+      image: chrishirsch/kuberhealthy-storage-check:v0.0.2
       imagePullPolicy: IfNotPresent
       name: main
       resources:
