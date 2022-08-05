@@ -1,10 +1,10 @@
 deploy: build push
 
 build: 
-	docker build -t chrishirsch/kuberhealthy-storage-check:v0.0.1 -f Dockerfile .
+	docker build -t chrishirsch/kuberhealthy-storage-check:v0.0.2 -f Dockerfile .
 
 push:
-	docker push chrishirsch/kuberhealthy-storage-check:v0.0.1
+	docker push chrishirsch/kuberhealthy-storage-check:v0.0.2
 
 apply:
 	kubectl apply -f deploy/storage-check.yaml  
