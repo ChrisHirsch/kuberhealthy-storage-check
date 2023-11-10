@@ -6,7 +6,7 @@ RUN go mod download
 COPY cmd/storage-check /build
 WORKDIR /build
 ENV CGO_ENABLED=0
-RUN curl -sfL https://raw.githubusercontent.com/securego/gosec/master/install.sh | sh -s -- -b $GOPATH/bin latest
+RUN curl -sfL https://raw.githubusercontent.com/securego/gosec/master/install.sh | sh -s -- -b $GOPATH/bin v2.18.2
 RUN go build -v
 RUN go test -v
 RUN gosec -exclude=G107,G109,G304,G601 ./...
