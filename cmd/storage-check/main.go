@@ -21,6 +21,7 @@ import (
 	kh "github.com/Comcast/kuberhealthy/v2/pkg/checks/external/checkclient"
 	"github.com/Comcast/kuberhealthy/v2/pkg/kubeClient"
 	log "github.com/sirupsen/logrus"
+	corev1 "k8s.io/api/core/v1"
 	"k8s.io/client-go/kubernetes"
 )
 
@@ -109,6 +110,9 @@ var (
 	// Seconds allowed for the shutdown process to complete.
 	shutdownGracePeriodEnv = os.Getenv("SHUTDOWN_GRACE_PERIOD")
 	shutdownGracePeriod    time.Duration
+
+	tolerationsEnv = os.Getenv("CHECK_TOLERATIONS")
+	tolerations    []corev1.Toleration
 
 	// Time object used for the check.
 	now time.Time

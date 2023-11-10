@@ -10,7 +10,7 @@ Once the contents of the `PVC` have been validated, the check `Job`, the init `J
 
 Container resource requests are set to `15 millicores` of CPU and `20Mi` units of memory and use the Alpine image `alpine:3.11` for the `Job` and a default of `1Gi` for the `PVC`.  If the environment variable `CHECK_STORAGE_PVC_SIZE` is set then the value of that will be used instead of the default.
 
-By default, the nodes of the cluster will be discovered and only those nodes that are `untainted`, in a `Ready` state and not in the role of `master` will be used. If node(s) need to be `ignored` for whatever reason, then the environment variable `CHECK_STORAGE_IGNORED_CHECK_NODES` should be used a space or comma separated list of nodes should be supplied. If `auto-discovery` is not desired, the environment variable `CHECK_STORAGE_ALLOWED_CHECK_NODES` can be used and a space or comma separated list of nodes that should be checked needs to be supplied. If `CHECK_STORAGE_ALLOWED_CHECK_NODES` is supplied and a node in that list matches a node in the ignored (`CHECK_STORAGE_IGNORED_CHECK_NODES`) list then that node will be ignored.
+By default, the nodes of the cluster will be discovered and only those nodes that are `untainted` (or has taints that are all specified in `CHECK_TOLERATIONS`), in a `Ready` state and not in the role of `master` will be used. If node(s) need to be `ignored` for whatever reason, then the environment variable `CHECK_STORAGE_IGNORED_CHECK_NODES` should be used a space or comma separated list of nodes should be supplied. If `auto-discovery` is not desired, the environment variable `CHECK_STORAGE_ALLOWED_CHECK_NODES` can be used and a space or comma separated list of nodes that should be checked needs to be supplied. If `CHECK_STORAGE_ALLOWED_CHECK_NODES` is supplied and a node in that list matches a node in the ignored (`CHECK_STORAGE_IGNORED_CHECK_NODES`) list then that node will be ignored.
 
 By default, the storage check `Job` and initialize storage check `Job` will use Alpine's `alpine:3.11` image. If a different image is desired, use the environment variable `CHECK_STORAGE_IMAGE` or `CHECK_STORAGE_INIT_IMAGE` depending on which image should be changed.
 
@@ -33,7 +33,7 @@ This check follows the list of actions in order during the run of the check:
 1.  Looks for old storage check job, storage init job, and PVC belonging to this check and cleans them up.
 2.  Creates a PVC in the namespace and waits for the PVC to be ready.
 3.  Creates a storage init configuration, applies it to the namespace, and waits for the storage init job to come up and initialize the PVC with known data.
-4.  Determine which nodes in the cluster are going to run the storage check by auto-discovery or a list supplied nodes via the `CHECK_STORAGE_IGNORED_CHECK_NODES` and `CHECK_STORAGE_ALLOWED_CHECK_NODES` environment variables.
+4.  Determine which nodes in the cluster are going to run the storage check by auto-discovery or a list supplied nodes via the `CHECK_STORAGE_IGNORED_CHECK_NODES` and `CHECK_STORAGE_ALLOWED_CHECK_NODES` environment variables. Nodes with taints will not be included unless the toleration is configured in `CHECK_TOLERATIONS`.
 5.  For each node that needs a check, creates a storage check configuration, applies it to the namespace, and waits for the storage check job to start and validate the contents of storage on each desired node.
 6.  Tear everything down once completed.
 
@@ -55,6 +55,7 @@ This check follows the list of actions in order during the run of the check:
   - `CHECK_POD_CPU_LIMIT`: Check pod deployment CPU limit value. Calculated in decimal SI units `(75 = 75m cpu)`.
   - `CHECK_POD_MEM_REQUEST`: Check pod deployment memory request value. Calculated in binary SI units `(20 * 1024^2 = 20Mi memory)`.
   - `CHECK_POD_MEM_LIMIT`: Check pod deployment memory limit value. Calculated in binary SI units `(75 * 1024^2 = 75Mi memory)`.
+  - `CHECK_TOLERATIONS`: Check pod tolerations of node taints. In the format "key=value:effect,key=value:effect". By default no taints are tolerated.
   - `ADDITIONAL_ENV_VARS`: Comma separated list of `key=value` variables passed into the pod's containers.
   - `SHUTDOWN_GRACE_PERIOD`: Amount of time in seconds the shutdown will allow itself to clean up after an interrupt signal (default=`30s`).
   - `DEBUG`: Verbose debug logging.
