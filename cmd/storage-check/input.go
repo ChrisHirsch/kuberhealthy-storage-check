@@ -19,6 +19,7 @@ import (
 
 	kh "github.com/Comcast/kuberhealthy/v2/pkg/checks/external/checkclient"
 	log "github.com/sirupsen/logrus"
+	corev1 "k8s.io/api/core/v1"
 )
 
 // parseDebugSettings parses debug settings and fatals on errors.
@@ -218,5 +219,46 @@ func parseInputValues() {
 		}
 		shutdownGracePeriod = duration
 		log.Infoln("Parsed SHUTDOWN_GRACE_PERIOD:", shutdownGracePeriod)
+	}
+
+	// Parse CHECK_TOLERATIONS in the format "key=value:effect,key=value:effect"
+	if len(tolerationsEnv) > 0 {
+		tolerationSpecs := strings.Split(tolerationsEnv, ",")
+		for _, spec := range tolerationSpecs {
+			parts := strings.Split(spec, ":")
+			if len(parts) != 2 {
+				log.Fatalf("Error: invalid toleration specification: %s", spec)
+			}
+
+			keyValue := parts[0]
+			effect := parts[1]
+
+			keyValueParts := strings.Split(strings.TrimSpace(keyValue), "=")
+			if len(keyValueParts) != 2 {
+				log.Fatalf("Error: invalid key-value specification: %s", keyValue)
+			}
+
+			key := keyValueParts[0]
+			value := keyValueParts[1]
+
+			var taintEffect corev1.TaintEffect
+			switch strings.TrimSpace(effect) {
+			case "NoSchedule":
+				taintEffect = corev1.TaintEffectNoSchedule
+			case "PreferNoSchedule":
+				taintEffect = corev1.TaintEffectPreferNoSchedule
+			default:
+				log.Fatalf("Error: unknown effect value: %s", effect)
+			}
+
+			toleration := corev1.Toleration{
+				Key:      key,
+				Operator: "Equal",
+				Value:    value,
+				Effect:   taintEffect,
+			}
+
+			tolerations = append(tolerations, toleration)
+		}
 	}
 }

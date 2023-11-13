@@ -1,1 +1,2 @@
 - [Chris Hirsch](mailto:chris@base2technology.com)
+- [Lee Smith](mailto:lee.smith@fundingcircle.com)

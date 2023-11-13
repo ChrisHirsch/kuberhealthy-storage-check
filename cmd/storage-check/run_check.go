@@ -14,6 +14,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"reflect"
 	"strings"
 	"time"
 
@@ -28,7 +29,6 @@ type Node struct {
 	schedulable bool
 	override    bool
 	status      v1.NodeStatus
-	effect      v1.TaintEffect
 }
 
 // runStorageCheck sets up a storage PVC, a storage init and storage check and applies it to the cluster.
@@ -169,19 +169,17 @@ func runStorageCheck() {
 			node.name = n.Name
 			node.status = n.Status
 
-			// TODO Need to work through more logic to see if this should be configurable
 			if len(n.Spec.Taints) > 0 {
-				// By defalt, only schedule the storage checks on untained (nodes that are Ready and not masters) nodes
-				for _, t := range n.Spec.Taints {
-					log.Debugln("t.Effect=", t.Effect)
-					log.Debugln("t.Key=", t.Key)
-					log.Debugln("t.Value=", t.Value)
-					log.Infoln("Adding node ", n.Name, " which is tainted as ", t.Effect, "  NOT be schduled for check")
-					node.effect = t.Effect
-					node.schedulable = false
+				// By default, only schedule the storage checks on untainted nodes
+				node.schedulable = toleratesAllTaints(tolerations, n.Spec.Taints)
+
+				status := "be"
+				if !node.schedulable {
+					status = "NOT be"
 				}
+				log.Printf("Adding node %s with taints %s to %s scheduled for check", n.Name, formatTaints(n.Spec.Taints), status)
 			} else {
-				log.Infoln("Adding untainted node ", n.Name, " to be schduled for check")
+				log.Infoln("Adding untainted node ", n.Name, " to be scheduled for check")
 				node.schedulable = true
 			}
 			checkNodes[node.name] = node
@@ -369,4 +367,37 @@ func cleanUpOrphanedResources(ctx context.Context) chan error {
 	}(ctx)
 
 	return cleanUpChan
+}
+
+func toleratesAllTaints(tolerations []v1.Toleration, nodeTaints []v1.Taint) bool {
+	for _, nodeTaint := range nodeTaints {
+		tolerated := false
+		for _, toleration := range tolerations {
+			if reflect.DeepEqual(toleration, v1.Toleration{
+				Key:      nodeTaint.Key,
+				Value:    nodeTaint.Value,
+				Operator: v1.TolerationOpEqual,
+				Effect:   nodeTaint.Effect,
+			}) {
+				tolerated = true
+				break
+			}
+		}
+		if !tolerated {
+			return false
+		}
+	}
+	return true
+}
+
+func formatTaints(taints []v1.Taint) string {
+	var taintStrings []string
+
+	for _, taint := range taints {
+		// Format each taint as "key=value:effect"
+		taintString := fmt.Sprintf("%s=%s:%s", taint.Key, taint.Value, taint.Effect)
+		taintStrings = append(taintStrings, taintString)
+	}
+
+	return strings.Join(taintStrings, ",")
 }

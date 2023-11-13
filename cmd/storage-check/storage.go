@@ -141,6 +141,7 @@ func initializeStorageConfig(jobName string, pvcName string) *batchv1.Job {
 					Name:         "data",
 					VolumeSource: corev1.VolumeSource{PersistentVolumeClaim: pvc},
 				}},
+				Tolerations: tolerations,
 			},
 		},
 	}
