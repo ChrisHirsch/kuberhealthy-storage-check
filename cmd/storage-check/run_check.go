@@ -70,7 +70,7 @@ func runStorageCheck() {
 	// Create a storage resource.
 	storageConfig := createStorageConfig(checkStorageName)
 	log.Infoln("Created Storage resource.")
-	log.Infof("It looks like: %v", storageConfig)
+	log.Debugf("It looks like: %v", storageConfig)
 
 	// Apply the storage struct manifest to the cluster.
 	var storageResult StorageResult
@@ -100,7 +100,7 @@ func runStorageCheck() {
 	//initStorageConfig := initializeStorageConfig(checkStorageName+"-init", checkStorageName)
 	initStorageConfig := initializeStorageConfig(checkStorageName+"-init-job", checkStorageName)
 	log.Infoln("Created Storage Initialiazer resource.")
-	log.Infof("It looks like: %v", initStorageConfig)
+	log.Debugf("It looks like: %v", initStorageConfig)
 
 	// Initialize the storage
 	var initStorageResult InitStorageResult
@@ -157,13 +157,13 @@ func runStorageCheck() {
 			// LabelSelector: defaultLabelKey + "=" + defaultLabelValueBase + strconv.Itoa(int(now.Unix())),
 		})
 		if err != nil {
-			log.Infoln("Error on getting nodes..not sure what to do", err)
+			log.Errorln("Error on getting nodes.. not sure what to do", err)
 		}
 
-		log.Infoln("Nodes are ", nodes)
+		log.Debugln("Nodes are ", nodes)
 		for _, n := range nodes.Items {
 			log.Infoln("Node.name=", n.Name)
-			log.Infoln("Status=", n.Status)
+			log.Debugln("Status=", n.Status)
 
 			node := new(Node)
 			node.name = n.Name
@@ -221,10 +221,15 @@ func runStorageCheck() {
 
 	for nodeName, node := range checkNodes {
 		if node.schedulable == true {
-			log.Infof("Creating config for %s %+v", nodeName, node)
+			if !verifyStillSchedulable(nodeName) {
+				log.Warningf("Node %s is no longer schedulable, skipping check", nodeName)
+				continue
+			}
+
+			log.Infof("Creating config for %s", nodeName)
 			config := checkNodeConfig(checkStorageName+"-check-job", checkStorageName, nodeName)
 			log.Infoln("Created config.")
-			log.Infof("It looks like: %+v", config)
+			log.Debugf("It looks like: %+v", config)
 
 			// Initialize the storage
 			var checkStorageResult CheckStorageResult
@@ -400,4 +405,24 @@ func formatTaints(taints []v1.Taint) string {
 	}
 
 	return strings.Join(taintStrings, ",")
+}
+
+func verifyStillSchedulable(nodeName string) bool {
+	log.Infof("Checking if %s is still schedulable", nodeName)
+
+	nodes, err := client.CoreV1().Nodes().List(metav1.ListOptions{})
+	if err != nil {
+		log.Errorln("Error on getting nodes... not sure what to do", err)
+	}
+
+	schedulable := false
+
+	for _, n := range nodes.Items {
+		if n.Name == nodeName {
+			schedulable = true
+			break
+		}
+	}
+
+	return schedulable
 }

@@ -94,7 +94,7 @@ func createStorageConfig(pvcname string) *corev1.PersistentVolumeClaim {
 	// Add the storage spec to the storage.
 	pvc.Spec = pvcSpec
 
-	log.Infoln("PVC ", pvcname, " is", pvc, "namespace environment variables:chris", additionalEnvVars)
+	log.Debugln("PVC", pvcname, "is", pvc, "namespace environment variables:chris", additionalEnvVars)
 	return pvc
 }
 
@@ -154,7 +154,7 @@ func initializeStorageConfig(jobName string, pvcName string) *batchv1.Job {
 	// Add the storage spec to the storage.
 	job.Spec = jobSpec
 
-	log.Infoln("Job ", jobName, " is", job, "namespace environment variables:", additionalEnvVars)
+	log.Debugln("Job", jobName, "is", job, "namespace environment variables:", additionalEnvVars)
 	return job
 }
 
@@ -214,7 +214,7 @@ func checkNodeConfig(jobName string, pvcName string, node string) *batchv1.Job {
 	// Add the storage spec to the storage.
 	job.Spec = jobSpec
 
-	log.Infoln("Job ", jobName, " is", job, "namespace environment variables:", additionalEnvVars)
+	log.Debugln("Job", jobName, "is", job, "namespace environment variables:", additionalEnvVars)
 	return job
 }
 
