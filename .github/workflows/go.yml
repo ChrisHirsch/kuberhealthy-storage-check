@@ -34,6 +34,7 @@ jobs:
       uses: gandarez/semver-action@v2.0.0
       with:
         branching_model: "trunk-based"
+        bump: true
     - name: "Created tag"
       run: echo "tag ${{ steps.semver-tag.outputs.semver_tag }}"
 
