@@ -20,7 +20,7 @@ jobs:
       id: go
 
     - name: Check out code into the Go module directory
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Get dependencies
       run: |
@@ -29,6 +29,13 @@ jobs:
             curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
             dep ensure
         fi
+
+    - id: semver-tag
+      uses: gandarez/semver-action@v2.0.0
+      with:
+        branching_model: "trunk-based"
+    - name: "Created tag"
+      run: echo "tag ${{ steps.semver-tag.outputs.semver_tag }}"
 
     - name: Build
       run:  cd cmd/storage-check && go build -v
